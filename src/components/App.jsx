@@ -2,13 +2,18 @@ import { Component } from 'react';
 import ContactList from './ContactList';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
+import Notiflix from 'notiflix';
 
 export class App extends Component {
   state = {
-    contacts: [],
+    contacts: [
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    ],
     filter: '',
   };
-
   componentDidMount() {
     const localData = localStorage.getItem('contacts');
     if (localData) this.setState({ contacts: JSON.parse(localData) });
@@ -21,7 +26,24 @@ export class App extends Component {
     }
   }
 
+  checkNameForRepeat = contactName => {
+    return this.state.contacts.some(
+      ({ name }) => name.toLowerCase() === contactName.toLowerCase()
+    );
+  };
+
   handleAddContact = obj => {
+    /*Перевірка чи існує контакт*/
+    if (this.checkNameForRepeat(obj.name)) {
+      Notiflix.Notify.warning(`${obj.name} is already in contacts`, {
+        position: 'center-top',
+        distance: '50px',
+        fontSize: '40px',
+        width: '600px',
+      });
+      return;
+    }
+
     this.setState(prev => {
       return {
         contacts: [...prev.contacts, obj],
@@ -41,8 +63,8 @@ export class App extends Component {
 
   getVisibleContacts = () => {
     const normalizedFilter = this.state.filter.toLowerCase();
-    return this.state.contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
+    return this.state.contacts.filter(c =>
+      c.name.toLowerCase().includes(normalizedFilter)
     );
   };
 
