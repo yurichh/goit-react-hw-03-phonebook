@@ -20,9 +20,8 @@ export class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    if (prevState.contacts) {
-      prevState.contacts.length !== this.state.contacts.length &&
-        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
     }
   }
 
@@ -30,6 +29,10 @@ export class App extends Component {
     return this.state.contacts.some(
       ({ name }) => name.toLowerCase() === contactName.toLowerCase()
     );
+  };
+
+  handleFilter = ({ target: { name, value } }) => {
+    this.setState({ [name]: value });
   };
 
   handleAddContact = obj => {
@@ -57,10 +60,6 @@ export class App extends Component {
     }));
   };
 
-  handleChange = ({ target: { name, value } }) => {
-    this.setState({ [name]: value });
-  };
-
   getVisibleContacts = () => {
     const normalizedFilter = this.state.filter.toLowerCase();
     return this.state.contacts.filter(c =>
@@ -72,15 +71,11 @@ export class App extends Component {
     return (
       <>
         <h1 className="title">Phonebook</h1>
-        <ContactForm
-          contacts={this.state.contacts}
-          handleAddContact={this.handleAddContact}
-          handleChange={this.handleChange}
-        />
+        <ContactForm handleAddContact={this.handleAddContact} />
 
         <section className="contacts-wrapper">
           <h1 className="title">Contacts</h1>
-          <Filter handleChange={this.handleChange} />
+          <Filter handleFilter={this.handleFilter} />
           <ContactList
             contactsArray={this.getVisibleContacts()}
             handleDelete={this.handleDelete}

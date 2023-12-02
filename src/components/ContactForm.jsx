@@ -1,16 +1,18 @@
 import React from 'react';
 import { nanoid } from 'nanoid';
 import Notiflix from 'notiflix';
+import { Component } from 'react';
 
-const ContactForm = ({ handleChange, handleAddContact }) => {
-  const createContactObj = e => {
+class ContactForm extends Component {
+  state = {
+    name: '',
+    number: '',
+  };
+  createContactObj = e => {
     e.preventDefault();
 
-    let nameInput = e.target.form[0];
-    let numberInput = e.target.form[1];
-
     /* Перевірка на заповнення полів */
-    if (!nameInput.value || !numberInput.value) {
+    if (!this.state.name || !this.state.number) {
       Notiflix.Notify.warning('Ooops... Something missed', {
         position: 'center-top',
         distance: '50px',
@@ -21,44 +23,57 @@ const ContactForm = ({ handleChange, handleAddContact }) => {
     }
 
     const newContactObj = {
-      name: nameInput.value,
-      number: numberInput.value,
+      name: this.state.name,
+      number: this.state.number,
       id: nanoid(),
     };
 
-    handleAddContact(newContactObj);
-    e.target.form.reset();
+    this.props.handleAddContact(newContactObj);
+    this.setState({ name: '', number: '' });
+
+    // e.target.form.reset();
+  };
+  handleChange = ({ target: { name, value } }) => {
+    this.setState({ [name]: value });
   };
 
-  return (
-    <form action="submit" className="add-form">
-      <label htmlFor="name" className="add-label">
-        Name
-      </label>
-      <input
-        pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-        onChange={handleChange}
-        type="text"
-        name="name"
-        required
-        className="add-input"
-      />
-      <label htmlFor="number" className="add-label">
-        Number
-      </label>
-      <input
-        pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
-        onChange={handleChange}
-        type="tel"
-        name="number"
-        required
-        className="add-input"
-      />
-      <button className="add-btn" type="submit" onClick={createContactObj}>
-        Add contact
-      </button>
-    </form>
-  );
-};
+  render() {
+    return (
+      <form action="submit" className="add-form">
+        <label htmlFor="name" className="add-label">
+          Name
+        </label>
+        <input
+          pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          onChange={this.handleChange}
+          type="text"
+          name="name"
+          required
+          value={this.state.name}
+          className="add-input"
+        />
+        <label htmlFor="number" className="add-label">
+          Number
+        </label>
+        <input
+          pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
+          onChange={this.handleChange}
+          type="tel"
+          name="number"
+          required
+          value={this.state.number}
+          className="add-input"
+        />
+        <button
+          className="add-btn"
+          type="submit"
+          onClick={this.createContactObj}
+        >
+          Add contact
+        </button>
+      </form>
+    );
+  }
+}
 
 export default ContactForm;

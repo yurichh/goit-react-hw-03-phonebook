@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Filter = ({ handleChange }) => {
+const Filter = ({ handleFilter }) => {
   return (
     <>
       <label htmlFor="filter" className="filter-label">
@@ -10,7 +10,7 @@ const Filter = ({ handleChange }) => {
         type="text"
         name="filter"
         className="filter-input"
-        onChange={handleChange}
+        onChange={handleFilter}
       />
     </>
   );
